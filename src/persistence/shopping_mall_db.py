@@ -91,33 +91,104 @@ class ShoppingMallDB:
             cursor.close()
         except Error as e:
             print(f"Error deleting store: {e}")
+    
+    # ===== PROMOTION CRUD OPERATIONS =====
+    
+    def create_promotion(self, promotion_name, description, discount_percent, start_date, end_date):
+        """Create a new promotion"""
+        try:
+            cursor = self.connection.cursor()
+            query = """
+            INSERT INTO promotion (promotion_name, description, discount_percent, start_date, end_date, is_active)
+            VALUES (%s, %s, %s, %s, %s, 1)
+            """
+            cursor.execute(query, (promotion_name, description, discount_percent, start_date, end_date))
+            self.connection.commit()
+            print(f"Promotion '{promotion_name}' created successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error creating promotion: {e}")
+    
+    def read_all_promotions(self):
+        """Read all promotions"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT * FROM promotion"
+            cursor.execute(query)
+            promotions = cursor.fetchall()
+            cursor.close()
+            return promotions
+        except Error as e:
+            print(f"Error reading promotions: {e}")
+            return []
+    
+    def read_promotion_by_id(self, promotion_id):
+        """Read a specific promotion by ID"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT * FROM promotion WHERE id = %s"
+            cursor.execute(query, (promotion_id,))
+            promotion = cursor.fetchone()
+            cursor.close()
+            return promotion
+        except Error as e:
+            print(f"Error reading promotion: {e}")
+            return None
+    
+    def update_promotion(self, promotion_id, discount_percent):
+        """Update a promotion's discount percent"""
+        try:
+            cursor = self.connection.cursor()
+            query = "UPDATE promotion SET discount_percent = %s WHERE id = %s"
+            cursor.execute(query, (discount_percent, promotion_id))
+            self.connection.commit()
+            print(f"Promotion {promotion_id} updated successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error updating promotion: {e}")
+    
+    def delete_promotion(self, promotion_id):
+        """Delete a promotion"""
+        try:
+            cursor = self.connection.cursor()
+            query = "DELETE FROM promotion WHERE id = %s"
+            cursor.execute(query, (promotion_id,))
+            self.connection.commit()
+            print(f"Promotion {promotion_id} deleted successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error deleting promotion: {e}")
 
 if __name__ == "__main__":
     db = ShoppingMallDB()
     db.connect()
     
-    # Test all CRUD operations
-    print("\n===== READ ALL STORES =====")
-    stores = db.read_all_stores()
-    print(f"Total stores: {len(stores)}")
-    for store in stores:
-        print(store)
-    
-    print("\n===== CREATE NEW STORE =====")
-    db.create_store("New Mall Store", "Fashion", 205, 2, "555-9999", "2026-01-15")
-    
-    print("\n===== READ ALL STORES AGAIN =====")
+    print("\n===== STORE CRUD =====")
     stores = db.read_all_stores()
     print(f"Total stores: {len(stores)}")
     
-    print("\n===== UPDATE STORE =====")
-    db.update_store(2, "555-8888")
+    print("\n===== PROMOTION CRUD =====")
+    print("\n--- READ ALL PROMOTIONS ---")
+    promotions = db.read_all_promotions()
+    print(f"Total promotions: {len(promotions)}")
+    for promo in promotions:
+        print(promo)
     
-    print("\n===== DELETE STORE =====")
-    db.delete_store(2)
+    print("\n--- CREATE NEW PROMOTION ---")
+    db.create_promotion("Summer Sale", "50% off summer items", 50.00, "2026-06-01", "2026-08-31")
     
-    print("\n===== READ ALL STORES FINAL =====")
-    stores = db.read_all_stores()
-    print(f"Total stores: {len(stores)}")
+    print("\n--- READ ALL PROMOTIONS AGAIN ---")
+    promotions = db.read_all_promotions()
+    print(f"Total promotions: {len(promotions)}")
+    
+    print("\n--- UPDATE PROMOTION ---")
+    db.update_promotion(1, 75.00)
+    
+    print("\n--- DELETE PROMOTION ---")
+    db.delete_promotion(1)
+    
+    print("\n--- READ ALL PROMOTIONS FINAL ---")
+    promotions = db.read_all_promotions()
+    print(f"Total promotions: {len(promotions)}")
     
     db.disconnect()
