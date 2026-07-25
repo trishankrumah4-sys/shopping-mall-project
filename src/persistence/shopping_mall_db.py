@@ -24,8 +24,82 @@ class ShoppingMallDB:
         if self.connection and self.connection.is_connected():
             self.connection.close()
             print("Disconnected from database")
+    
+    # ===== STORE CRUD OPERATIONS =====
+    
+    def create_store(self, store_name, category, unit_number, floor_level, phone, lease_start_date):
+        """Create a new store"""
+        try:
+            cursor = self.connection.cursor()
+            query = """
+            INSERT INTO store (store_name, category, unit_number, floor_level, phone, lease_start_date, is_active)
+            VALUES (%s, %s, %s, %s, %s, %s, 1)
+            """
+            cursor.execute(query, (store_name, category, unit_number, floor_level, phone, lease_start_date))
+            self.connection.commit()
+            print(f"Store '{store_name}' created successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error creating store: {e}")
+    
+    def read_all_stores(self):
+        """Read all stores"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT * FROM store"
+            cursor.execute(query)
+            stores = cursor.fetchall()
+            cursor.close()
+            return stores
+        except Error as e:
+            print(f"Error reading stores: {e}")
+            return []
+    
+    def read_store_by_id(self, store_id):
+        """Read a specific store by ID"""
+        try:
+            cursor = self.connection.cursor()
+            query = "SELECT * FROM store WHERE id = %s"
+            cursor.execute(query, (store_id,))
+            store = cursor.fetchone()
+            cursor.close()
+            return store
+        except Error as e:
+            print(f"Error reading store: {e}")
+            return None
+    
+    def update_store(self, store_id, phone):
+        """Update a store's phone number"""
+        try:
+            cursor = self.connection.cursor()
+            query = "UPDATE store SET phone = %s WHERE id = %s"
+            cursor.execute(query, (phone, store_id))
+            self.connection.commit()
+            print(f"Store {store_id} updated successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error updating store: {e}")
+    
+    def delete_store(self, store_id):
+        """Delete a store"""
+        try:
+            cursor = self.connection.cursor()
+            query = "DELETE FROM store WHERE id = %s"
+            cursor.execute(query, (store_id,))
+            self.connection.commit()
+            print(f"Store {store_id} deleted successfully")
+            cursor.close()
+        except Error as e:
+            print(f"Error deleting store: {e}")
 
 if __name__ == "__main__":
     db = ShoppingMallDB()
     db.connect()
+    
+    # Test reading stores
+    stores = db.read_all_stores()
+    print(f"\nTotal stores: {len(stores)}")
+    for store in stores:
+        print(store)
+    
     db.disconnect()
