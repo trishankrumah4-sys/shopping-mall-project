@@ -96,10 +96,28 @@ if __name__ == "__main__":
     db = ShoppingMallDB()
     db.connect()
     
-    # Test reading stores
+    # Test all CRUD operations
+    print("\n===== READ ALL STORES =====")
     stores = db.read_all_stores()
-    print(f"\nTotal stores: {len(stores)}")
+    print(f"Total stores: {len(stores)}")
     for store in stores:
         print(store)
+    
+    print("\n===== CREATE NEW STORE =====")
+    db.create_store("New Mall Store", "Fashion", 205, 2, "555-9999", "2026-01-15")
+    
+    print("\n===== READ ALL STORES AGAIN =====")
+    stores = db.read_all_stores()
+    print(f"Total stores: {len(stores)}")
+    
+    print("\n===== UPDATE STORE =====")
+    db.update_store(2, "555-8888")
+    
+    print("\n===== DELETE STORE =====")
+    db.delete_store(2)
+    
+    print("\n===== READ ALL STORES FINAL =====")
+    stores = db.read_all_stores()
+    print(f"Total stores: {len(stores)}")
     
     db.disconnect()
