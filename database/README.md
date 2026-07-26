@@ -4,8 +4,7 @@ IT 566: Computer Scripting Techniques — Summer 2026 Semester Project
 Student: Patricia Nkrumah
 
 This folder contains the data model and database scripts for the Shopping
-Mall Stores and Promotions project, following the drop/recreate scripting
-pattern from Chapters 23 and 24.
+Mall Stores and Promotions project.
 
 ## Project description
 
